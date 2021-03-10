@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="cn" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>管理 | 添加课程</title>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" th:href="@{../assets/plugins/bootstrap/css/bootstrap.min.css}">
+    <link rel="stylesheet" href="../assets/plugins/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="../assets/css/AdminLTE.css">
+    <!-- Ionicons -->
+    <link rel="stylesheet" href="../assets/css/ionicons.min.css">
+    <link rel="stylesheet" href="../assets/css/skins/_all-skins.css">
+    <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body class="hold-transition skin-blue sidebar-mini">
+<div class="wrapper" id="app">
+    <!-- 引入header -->
+    <div th:replace="commons/_header.html"/>
+    <!-- 引入sidebar -->
+    <div th:replace="commons/_sidebar.html"/>
+    <div class="content-wrapper">
+
+        <!-- Content Header (Page header) -->
+        <section class="content-header">
+            <h1>
+                课程管理
+            </h1>
+            <ol class="breadcrumb">
+                <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+                <li class="active">课程添加</li>
+            </ol>
+        </section>
+
+        <!--    操作弹窗, 默认隐藏   -->
+        <div class="alert alert-success alert-dismissible" style="margin: 20px;" v-show="msg">
+            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+            {{msg}}
+        </div>
+        <!-- Main content -->
+        <section class="content">
+            <!-- Horizontal Form -->
+            <div class="box box-info" style="width: 68%;margin: 0 auto;">
+                <div class="box-header with-border">
+                    <h3 class="box-title">添加课程</h3>
+                    <a href="/course" class="btn btn-primary btn-xs">列表</a>
+                </div>
+                <!-- /.box-header -->
+                <!-- form start -->
+                <div class="form-horizontal">
+                    <div class="box-body">
+                        <div class="form-group">
+                            <label for="name" class="col-sm-2 control-label">课程名</label>
+
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" id="name" v-model="course.name">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="credit" class="col-sm-2 control-label">学分</label>
+
+                            <div class="col-sm-10">
+                                <input type="number" class="form-control" id="credit" v-model="course.credit">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="limitNum" class="col-sm-2 control-label">限额</label>
+
+                            <div class="col-sm-10">
+                                <input type="number" class="form-control" id="limitNum" v-model="course.limitNum">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="beginTime" class="col-sm-2 control-label">开始时间 </label>
+
+                            <div class="col-sm-10">
+                                <input type="datetime-local" class="form-control" id="beginTime" v-model="course.beginTime">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="endTime" class="col-sm-2 control-label">结束时间 </label>
+
+                            <div class="col-sm-10">
+                                <input type="datetime-local" class="form-control" id="endTime" v-model="course.endTime">
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /.box-body -->
+                    <div class="box-footer">
+                        <button class="btn btn-default" @click="reset()">重置</button>
+                        <button class="btn btn-info pull-right" @click="addCourse()">保存</button>
+                    </div>
+                    <!-- /.box-footer -->
+                </div>
+            </div>
+            <!-- /.box -->
+        </section>
+        <!-- /.content -->
+    </div>
+    <!-- 引入footer -->
+    <div th:replace="commons/_footer.html"/>
+    <script>
+        var app = new Vue({
+            el: '#app',
+            data: {
+                course: {},
+                msg: null,
+            },
+            methods:{
+                addCourse() {
+                    const res = saveCourse(this.course);
+                    if (res.code === 200) {
+                        this.reset()
+                    }
+                    alert(res.message)
+                },
+                reset() {
+                    this.course = {}
+                }
+            },
+            created() {
+            }
+        })
+    </script>
+</div>
+</body>
+</html>

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="cn" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>选课系统登陆</title>
+    <link rel="stylesheet" href="../assets/plugins/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../assets/css/login.css">
+</head>
+<body class="text-center">
+<div class="login-box" id="login">
+    <div class="login-logo">
+        欢迎登陆
+    </div>
+    <div class="form-signin" >
+        <div class="alert alert-danger" v-show="message" role="alert">
+            {{message}}
+        </div>
+        <label class="sr-only" >用户名</label>
+        <input type="text" v-model="loginParams.number" class="form-control" placeholder="工号/学号"><br>
+        <label class="sr-only" >密码</label>
+        <input type="password" v-model="loginParams.password" class="form-control" placeholder="密码"><br>
+        <button id="btnLogin" class="btn btn-lg btn-primary btn-block" @click="summit" >登陆</button>
+    </div>
+    <p class="mt-5 mb-3 text-muted">© 2021</p>
+</div>
+<script src="../assets/plugins/jquery/jquery.min.js"></script>
+<script src="../assets/plugins/bootstrap/js/bootstrap.min.js"></script>
+<script src="../assets/js/request.js"></script>
+<script src="../assets/js/api.js"></script>
+<script src="../assets/js/vue.js"></script>
+<script>
+    var app = new Vue({
+        el: '#login',
+        data: {
+            loginParams: {
+                number: null,
+                password: null,
+            },
+            message: null,
+        },
+        methods:{
+            /**
+             * 获取所有电影
+             * @constructor
+             */
+            summit(){
+                //this 的指向问题
+                let that = this
+                const res = login(that.loginParams)
+                if (res.code === 200) {
+                    localStorage.setItem("user", JSON.stringify(res.data))
+                    window.location.href = "/dashboard"
+                } else {
+                    that.message = res.message
+                }
+            },
+        },
+        created() {
+        }
+    })
+</script>
+</body>
+</html>

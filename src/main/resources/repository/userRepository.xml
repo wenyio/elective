@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 这是用来操作博客信息的 Fenix XML 文件，请填写 namespace 命名空间. -->
+<fenixs namespace="com.example.elective.repository.UserRepository">
+
+    <fenix id="findByPage">
+        SELECT
+        b
+        FROM
+        User AS b
+        WHERE deleted = 0
+        <andEqual field="b.status" value="param.status" match="?param.status > -1"/>
+        <andEqual field="b.role" value="param.role" match="?param.role > -1"/>
+
+        @if{?param.searchValue != empty}
+        AND (b.name like '%@{param.searchValue}%' or b.number like '%@{param.searchValue}%')
+        @end{}
+    </fenix>
+
+</fenixs>

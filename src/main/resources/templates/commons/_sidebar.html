@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="cn" xmlns:th="http://www.thymeleaf.org">
+<head>
+</head>
+<body>
+<!-- Left side column. contains the logo and sidebar -->
+<aside class="main-sidebar" id="sidebar">
+    <!-- sidebar: style can be found in sidebar.less -->
+    <section class="sidebar">
+        <!-- sidebar menu: : style can be found in sidebar.less -->
+        <ul class="sidebar-menu" data-widget="tree">
+            <li th:class="${session.activeUrl == 'dashboard' ? 'active' : ''}">
+                <a href="/dashboard">
+                    <i class="fa fa-dashboard"></i> <span>仪表盘</span>
+                </a>
+            </li>
+            <li th:if="${session.user_role == 1}" th:class="${session.activeUrl == 'user' ? 'active treeview' : 'treeview'}">
+                <a href="#">
+                    <i class="fa fa fa-user-o"></i>
+                    <span>学生管理</span>
+                    <span class="pull-right-container">
+                         <i class="fa fa-angle-left pull-right"></i>
+                    </span>
+                </a>
+                <ul class="treeview-menu">
+                    <li><a href="/user"><i class="fa fa-circle-o"></i> 所有学生</a></li>
+                    <li><a href="/user/save"><i class="fa fa-circle-o"></i> 添加学生</a></li>
+                </ul>
+            </li>
+            <li th:if="${session.user_role == 1}" th:class="${session.activeUrl == 'course' ? 'active treeview' : 'treeview'}">
+                <a href="#">
+                    <i class="fa fa fa-picture-o"></i>
+                    <span>课程管理</span>
+                    <span class="pull-right-container">
+              <i class="fa fa-angle-left pull-right"></i>
+            </span>
+                </a>
+                <ul class="treeview-menu">
+                    <li><a href="/course"><i class="fa fa-circle-o"></i> 所有课程</a></li>
+                    <li><a href="/course/save"><i class="fa fa-circle-o"></i> 添加课程</a></li>
+                </ul>
+            </li>
+            <li th:if="${session.user_role == 0}" th:class="${session.activeUrl == 'elective' ? 'active treeview' : 'treeview'}">
+                <a href="#">
+                    <i class="fa fa fa-book"></i>
+                    <span>选修管理</span>
+                    <span class="pull-right-container">
+              <i class="fa fa-angle-left pull-right"></i>
+            </span>
+                </a>
+                <ul class="treeview-menu">
+                    <li><a href="/elective/course"><i class="fa fa-circle-o"></i> 选修课程</a></li>
+                    <li><a href="/elective"><i class="fa fa-circle-o"></i> 已选课程</a></li>
+                </ul>
+            </li>
+            <li th:class="${session.activeUrl == 'profile' ? 'active treeview' : 'treeview'}">
+                <a href="#">
+                    <i class="fa fa fa-opera"></i>
+                    <span>系统管理</span>
+                    <span class="pull-right-container">
+              <i class="fa fa-angle-left pull-right"></i>
+            </span>
+                </a>
+                <ul class="treeview-menu">
+                    <li><a href="/profile"><i class="fa fa-circle-o"></i> 个人信息</a></li>
+                    <li><a href="/modify/password"><i class="fa fa-circle-o"></i> 修改密码</a></li>
+                </ul>
+            </li>
+        </ul>
+    </section>
+    <!-- /.sidebar -->
+</aside>
+</body>
+</html>

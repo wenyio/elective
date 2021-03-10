@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="cn" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>学生 | 选修结果</title>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" th:href="@{../assets/plugins/bootstrap/css/bootstrap.min.css}">
+    <link rel="stylesheet" href="../assets/plugins/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="../assets/css/AdminLTE.css">
+    <!-- Ionicons -->
+    <link rel="stylesheet" href="../assets/css/ionicons.min.css">
+    <link rel="stylesheet" href="../assets/css/skins/_all-skins.css">
+    <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body class="hold-transition skin-blue sidebar-mini">
+<div class="wrapper" id="app">
+    <!-- 引入header -->
+    <div th:replace="commons/_header.html"/>
+    <!-- 引入sidebar -->
+    <div th:replace="commons/_sidebar.html"/>
+    <!-- 页面内容 -->
+    <div class="content-wrapper">
+
+        <!-- Content Header (Page header) -->
+        <section class="content-header">
+            <h1>
+                选修结果
+            </h1>
+            <ol class="breadcrumb">
+                <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+                <li class="active">选修结果</li>
+            </ol>
+        </section>
+
+        <!--    操作弹窗, 默认隐藏   -->
+        <div class="alert alert-success alert-dismissible" style="margin: 20px;" v-show="msg">
+            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+            {{msg}}
+        </div>
+        <!-- Main content -->
+        <section class="content">
+            <div class="box">
+                <div class="box-header">
+                    <h3 class="box-title">选修列表</h3>
+                </div>
+                <!-- /.box-header -->
+                <div class="box-body table-responsive no-padding">
+                    <table class="table table-hover">
+                        <tr>
+                            <th>序号</th>
+                            <th>课程</th>
+                            <th>教师</th>
+                            <th>学分</th>
+                            <th>成绩</th>
+                            <th>状态</th>
+                            <th>操作</th>
+                        </tr>
+                        <tr v-for="(item,index) in list" :key="index">
+                            <td>{{index+1}}</td>
+                            <td>{{item.course.name}}</td>
+                            <td>{{item.course.teacher.name}}</td>
+                            <td>{{item.course.credit}}</td>
+                            <td>{{item.grade}}</td>
+                            <td>{{item.status === 0 ? '未结算' : item.status === 1 ? '通过' : '未通过'}}</td>
+                            <td>
+                                <button type="button" @click="cancelElective(item.courseId)" class="btn btn-info btn-xs" >
+                                    退选
+                                </button>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <!-- /.box-body -->
+            </div>
+        </section>
+        <!-- /.content -->
+    </div>
+    <!-- 引入footer -->
+    <div th:replace="commons/_footer.html"/>
+    <script>
+        var app = new Vue({
+            el: '#app',
+            data: {
+                list: [],
+            },
+            methods:{
+                elective() {
+                    const res = userElective();
+                    if (res.code === 200) {
+                        this.list = res.data
+                    } else {
+                        alert(res.message)
+                    }
+                },
+                cancelElective(courseId) {
+                    const res = cancelElective(courseId);
+                    if (res.code === 200) {
+                        this.elective();
+                    } else {
+                        alert(res.message)
+                    }
+                }
+            },
+            created() {
+                this.elective()
+            }
+        })
+    </script>
+</div>
+</body>
+</html>

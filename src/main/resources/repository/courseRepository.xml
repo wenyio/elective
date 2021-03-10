@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 这是用来操作博客信息的 Fenix XML 文件，请填写 namespace 命名空间. -->
+<fenixs namespace="com.example.elective.repository.CourseRepository">
+
+    <fenix id="findByPage">
+        SELECT
+        b
+        FROM
+        Course AS b
+        WHERE deleted = 0
+
+        @if{?param.searchValue != empty}
+        AND (b.name like '%@{param.searchValue}%')
+        @end{}
+    </fenix>
+
+</fenixs>

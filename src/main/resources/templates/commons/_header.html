@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="cn" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+</head>
+<body>
+    <header class="main-header" id="header">
+        <!-- Logo -->
+        <a href="#" class="logo">
+            <span class="logo-mini"><b>系统</b></span>
+            <span class="logo-lg"><b>选课管理</b>系统</span>
+        </a>
+        <!-- Header Navbar: style can be found in header.less -->
+        <nav class="navbar navbar-static-top">
+            <!-- Sidebar toggle button-->
+            <a href="#" class="sidebar-toggle" data-toggle="push-menu" role="button">
+                <span class="sr-only">Toggle navigation</span>
+            </a>
+
+            <div class="navbar-custom-menu">
+                <ul class="nav navbar-nav">
+                    <li><a href="/" title="跳转前台页面" target="_blank"><i class="fa fa-location-arrow"></i></a></li>
+                    <!-- User Account: style can be found in dropdown.less -->
+                    <li class="dropdown user user-menu">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                            <img src="https://static.hdslb.com/images/akari.jpg" class="user-image" alt="User Image">
+                            <span class="hidden-xs">.</span>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <!-- User image -->
+                            <li class="user-header">
+                                <img src="https://static.hdslb.com/images/akari.jpg" class="img-circle" alt="User Image">
+
+                                <p>
+                                    一个很菜的Java学习者
+<!--                                    <small>{{user.role === 1 : '教师' ：'学生'}}</small>-->
+                                </p>
+                            </li>
+                            <!-- Menu Footer-->
+                            <li class="user-footer">
+                                <div class="pull-left">
+                                    <a href="/profile" class="btn btn-default"><i class="fa fa-user"></i> 个人信息</a>
+                                </div>
+                                <div class="pull-right">
+                                    <a href="/logOut" class="btn btn-default"><i class="fa fa-sign-out"></i> 退出登录</a>
+                                </div>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+</body>
+</html>

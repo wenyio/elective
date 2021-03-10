@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="cn" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>管理 | 课程管理</title>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" th:href="@{../assets/plugins/bootstrap/css/bootstrap.min.css}">
+    <link rel="stylesheet" href="../assets/plugins/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="../assets/css/AdminLTE.css">
+    <!-- Ionicons -->
+    <link rel="stylesheet" href="../assets/css/ionicons.min.css">
+    <link rel="stylesheet" href="../assets/css/skins/_all-skins.css">
+    <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body class="hold-transition skin-blue sidebar-mini">
+<div class="wrapper" id="app">
+    <!-- 引入header -->
+    <div th:replace="commons/_header.html"/>
+    <!-- 引入sidebar -->
+    <div th:replace="commons/_sidebar.html"/>
+    <!-- 页面内容 -->
+    <div class="content-wrapper">
+
+        <!-- Content Header (Page header) -->
+        <section class="content-header">
+            <h1>
+                课程管理
+            </h1>
+            <ol class="breadcrumb">
+                <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+                <li class="active">课程列表</li>
+            </ol>
+        </section>
+
+        <!--    操作弹窗, 默认隐藏   -->
+        <div class="alert alert-success alert-dismissible" style="margin: 20px;" v-show="msg">
+            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+            {{msg}}
+        </div>
+        <!-- Main content -->
+        <section class="content">
+            <div class="box">
+                <div class="box-header">
+                    <h3 class="box-title">用户列表</h3>
+                    <a href="/course/save" class="btn btn-primary btn-xs">添加</a>
+                    <div class="box-tools">
+                        <div class="input-group input-group-sm" style="width: 150px;">
+                            <input type="text" name="table_search" v-model="param.searchValue" class="form-control pull-left" placeholder="Search">
+
+                            <div class="input-group-btn">
+                                <button type="submit" class="btn btn-default" @click="fetch"><i class="fa fa-search"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- /.box-header -->
+                <div class="box-body table-responsive no-padding">
+                    <table class="table table-hover">
+                        <tr>
+                            <th>序号</th>
+                            <th>课程</th>
+                            <th>教师</th>
+                            <th>起止时间</th>
+                            <th>学分</th>
+                            <th>限额</th>
+                            <th>操作</th>
+                        </tr>
+                        <tr v-for="(item,index) in list" :key="index">
+                            <td>{{index+1}}</td>
+                            <td>{{item.name}}</td>
+                            <td>{{item.teacher.name}}</td>
+                            <td>{{item.beginTime}} - {{item.endTime}}</td>
+                            <td>{{item.credit}}</td>
+                            <td>{{item.selected}}/{{item.limitNum}}</td>
+                            <td>
+                                <button type="button" @click="queryDetail(item.id)" class="btn btn-primary btn-xs" data-toggle="modal" data-target="#modal-detail" >
+                                    详情
+                                </button>
+                                <button type="button" @click="settlementById(item.id)" class="btn btn-info btn-xs" >
+                                    结算
+                                </button>
+                                <button type="button" @click="course = item" class="btn btn-default btn-xs" data-toggle="modal" data-target="#modal-default" >
+                                    修改
+                                </button>
+                                <button type="button" @click="deleteCourse(item.id)" class="btn btn-danger btn-xs" >
+                                    删除
+                                </button>
+                            </td>
+                        </tr>
+                    </table>
+                    <nav aria-label="...">
+                        <ul class="pagination">
+                            <li @click="up">'
+                                <a href="#" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a>
+                            </li>
+                            <li :class="pageable.page === index + 1 ? 'active' : ''"
+                                v-for="(item, index) in pageable.totalPages"
+                                :key="index"
+                                @click="toPage(index+1)"><a href="#">{{index+1}}</a></li>
+                            <li @click="down">
+                                <a href="#" aria-label="Next"><span aria-hidden="true">&raquo;</span></a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+                <!-- /.box-body -->
+            </div>
+        </section>
+        <!-- /.content -->
+    </div>
+    <!-- 引入footer -->
+    <div th:replace="commons/_footer.html"/>
+    <div class="modal fade" id="modal-detail">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">选修详情</h4>
+                </div>
+                <div class="modal-body">
+                    <table class="table table-hover">
+                        <tr>
+                            <th>序号</th>
+                            <th>学生</th>
+                            <th>学号</th>
+                            <th>成绩</th>
+                            <th>状态</th>
+                            <th>操作</th>
+                        </tr>
+                        <tr v-for="(item,index) in detailList" :key="index">
+                            <td>{{index+1}}</td>
+                            <td>{{item.student.name}}</td>
+                            <td>{{item.student.number}}</td>
+                            <td>{{item.grade}}</td>
+                            <td>{{item.status === 0 ? '未结算' : item.status === 1 ? '通过' : '未通过'}}</td>
+                            <td>
+<!--                                <button type="button" class="btn btn-danger btn-xs" >-->
+<!--                                    删除-->
+<!--                                </button>-->
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+    <div class="modal fade" id="modal-default">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">修改课程{{course.id}}</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="alert alert-success alert-dismissible" style="margin: 20px;" v-show="mMsg">
+                        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                        {{mMsg}}
+                    </div>
+                    <div class="form-horizontal">
+                        <div class="box-body">
+                            <div class="form-group">
+                                <label for="name" class="col-sm-2 control-label">课程名</label>
+
+                                <div class="col-sm-10">
+                                    <input type="text" class="form-control" id="name" v-model="course.name">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="credit" class="col-sm-2 control-label">学分</label>
+
+                                <div class="col-sm-10">
+                                    <input type="number" class="form-control" id="credit" v-model="course.credit">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="limitNum" class="col-sm-2 control-label">限额</label>
+
+                                <div class="col-sm-10">
+                                    <input type="number" class="form-control" id="limitNum" v-model="course.limitNum">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="beginTime" class="col-sm-2 control-label">开始时间 </label>
+
+                                <div class="col-sm-10">
+                                    <input type="datetime-local" class="form-control" id="beginTime" v-model="course.beginTime">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="endTime" class="col-sm-2 control-label">结束时间 </label>
+
+                                <div class="col-sm-10">
+                                    <input type="datetime-local" class="form-control" id="endTime" v-model="course.endTime">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default pull-left" data-dismiss="modal" @click="mMsg = null">返回</button>
+                    <button type="button" class="btn btn-primary" @click="sava">修改</button>
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+    <script>
+        var app = new Vue({
+            el: '#app',
+            data: {
+                course: {},
+                param: {
+                    searchValue: null,
+                },
+                pageable: {
+                    page: 1,
+                    size: 10,
+                    totalPages: 1,
+                },
+                list: [],
+                detailList: [],
+                msg: null,
+                mMsg: null,
+            },
+            methods:{
+                fetch() {
+                    const that = this;
+                    console.log(this.pageable)
+                    this.param.page = this.pageable.page
+                    const res = listCourse(this.param);
+                    if (res.code === 200) {
+                        that.list = res.data.content
+                        that.pageable = {
+                            page: res.data.pageable.pageNumber + 1,
+                            size: res.data.pageable.pageSize,
+                            totalPages: res.data.totalPages
+                        }
+                    }
+                },
+                deleteCourse(id) {
+                    const res = deleteCourseById(id);
+                    if (res.code === 200) {
+                        this.fetch()
+                        this.msg = res.message
+                    } else {
+                        alert(res.message)
+                    }
+                },
+                sava() {
+                    const res = saveCourse(this.course);
+                    if (res.code === 200) {
+                        this.fetch()
+                        this.mMsg = res.message
+                    } else {
+                        alert(res.message)
+                    }
+                },
+                queryDetail(courseId) {
+                    const res = elective(courseId);
+                    if (res.code === 200) {
+                        this.detailList = res.data
+                    } else {
+                        alert(res.message)
+                    }
+                },
+                settlementById(courseId) {
+                    const res = settlement(courseId);
+                    if (rse.code === 200) {
+                        this.fetch()
+                    }
+                    alert(res.message)
+                },
+                up() {
+                    if (this.pageable.page > 0) {
+                        this.pageable.page = this.pageable.page - 1
+                        this.fetch()
+                    }
+                },
+                down() {
+                    if (this.pageable.page < this.pageable.totalPages) {
+                        this.pageable.page = this.pageable.page + 1
+                        this.fetch()
+                    }
+                },
+                toPage(page) {
+                    this.pageable.page = page
+                    this.fetch()
+                }
+            },
+            created() {
+                this.fetch()
+            }
+        })
+    </script>
+</div>
+</body>
+</html>

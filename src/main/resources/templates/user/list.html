@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="cn" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>管理 | 用户管理</title>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" th:href="@{../assets/plugins/bootstrap/css/bootstrap.min.css}">
+    <link rel="stylesheet" href="../assets/plugins/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="../assets/css/AdminLTE.css">
+    <!-- Ionicons -->
+    <link rel="stylesheet" href="../assets/css/ionicons.min.css">
+    <link rel="stylesheet" href="../assets/css/skins/_all-skins.css">
+    <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body class="hold-transition skin-blue sidebar-mini">
+<div class="wrapper" id="app">
+    <!-- 引入header -->
+    <div th:replace="commons/_header.html"/>
+    <!-- 引入sidebar -->
+    <div th:replace="commons/_sidebar.html"/>
+    <!-- 页面内容 -->
+    <div class="content-wrapper">
+
+        <!-- Content Header (Page header) -->
+        <section class="content-header">
+            <h1>
+                用户管理
+            </h1>
+            <ol class="breadcrumb">
+                <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+                <li class="active">用户列表</li>
+            </ol>
+        </section>
+
+        <!--    操作弹窗, 默认隐藏   -->
+        <div class="alert alert-success alert-dismissible" style="margin: 20px;" v-show="msg">
+            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+            {{msg}}
+        </div>
+        <!-- Main content -->
+        <section class="content">
+            <div class="box">
+                <div class="box-header">
+                    <h3 class="box-title">用户列表</h3>
+                    <a href="/user/save" class="btn btn-primary btn-xs">添加</a>
+                    <div class="box-tools">
+                        <div class="input-group input-group-sm" style="width: 150px;">
+                            <input type="text" name="table_search" v-model="param.searchValue" class="form-control pull-left" placeholder="Search">
+
+                            <div class="input-group-btn">
+                                <button type="submit" class="btn btn-default" @click="fetch"><i class="fa fa-search"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- /.box-header -->
+                <div class="box-body table-responsive no-padding">
+                    <table class="table table-hover">
+                        <tr>
+                            <th>序号</th>
+                            <th>姓名</th>
+                            <th>工号/学号</th>
+                            <th>角色</th>
+                            <th>状态</th>
+                            <th>操作</th>
+                        </tr>
+                        <tr v-for="(item,index) in list" :key="index">
+                            <td>{{index+1}}</td>
+                            <td>{{item.name}}</td>
+                            <td>{{item.number}}</td>
+                            <td>{{item.role === 1 ? '教师' : '学生'}}</td>
+                            <td>
+                                <button v-if="item.status === 1" type="button" @click="modifyStatus(item.id)" class="btn btn-success btn-xs" >
+                                    正常
+                                </button>
+                                <button v-if="item.status === 0" type="button" @click="modifyStatus(item.id)" class="btn btn-danger btn-xs" >
+                                    禁用
+                                </button>
+                            </td>
+                            <td>
+                                <button type="button" @click="user = item" class="btn btn-default btn-xs" data-toggle="modal" data-target="#modal-default" >
+                                    修改
+                                </button>
+                                <button type="button" @click="deleteUser(item.id)" class="btn btn-danger btn-xs" >
+                                    删除
+                                </button>
+                            </td>
+                        </tr>
+                    </table>
+                    <nav aria-label="...">
+                        <ul class="pagination">
+                            <li @click="up">'
+                                <a href="#" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a>
+                            </li>
+                            <li :class="pageable.page === index + 1 ? 'active' : ''"
+                                v-for="(item, index) in pageable.totalPages"
+                                :key="index"
+                                @click="toPage(index+1)"><a href="#">{{index+1}}</a></li>
+                            <li @click="down">
+                                <a href="#" aria-label="Next"><span aria-hidden="true">&raquo;</span></a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+                <!-- /.box-body -->
+            </div>
+        </section>
+        <!-- /.content -->
+    </div>
+    <!-- 引入footer -->
+    <div th:replace="commons/_footer.html"/>
+    <div class="modal fade" id="modal-default">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">修改用户{{user.id}}</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="alert alert-success alert-dismissible" style="margin: 20px;" v-show="mMsg">
+                        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                        {{mMsg}}
+                    </div>
+                    <div class="form-horizontal">
+                        <div class="box-body">
+                            <div class="form-group">
+                                <label for="name" class="col-sm-2 control-label">姓名</label>
+
+                                <div class="col-sm-10">
+                                    <input type="text" class="form-control" id="name" v-model="user.name">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="number" class="col-sm-2 control-label">学号/工号</label>
+
+                                <div class="col-sm-10">
+                                    <input type="text" disabled class="form-control" id="number" v-model="user.number">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default pull-left" data-dismiss="modal" @click="mMsg = null">返回</button>
+                    <button type="button" class="btn btn-primary" @click="sava">修改</button>
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+    <script>
+        var app = new Vue({
+            el: '#app',
+            data: {
+                user: {},
+                param: {
+                    // searchValue: "0xx0",
+                    status: -1,
+                    role: -1,
+                },
+                pageable: {
+                    page: 1,
+                    size: 10,
+                    totalPages: 1,
+                },
+                list: [],
+                msg: null,
+                mMsg: null,
+            },
+            methods:{
+                fetch() {
+                    const that = this;
+                    console.log(this.pageable)
+                    this.param.page = this.pageable.page
+                    const res = listUser(this.param);
+                    if (res.code === 200) {
+                        that.list = res.data.content
+                        that.pageable = {
+                            page: res.data.pageable.pageNumber + 1,
+                            size: res.data.pageable.pageSize,
+                            totalPages: res.data.totalPages
+                        }
+                    }
+                },
+                deleteUser(id) {
+                    const res = deleteUserById(id);
+                    if (res.code === 200) {
+                        this.fetch()
+                        this.msg = res.message
+                    } else {
+                        alert(res.message)
+                    }
+                },
+                modifyStatus(id) {
+                    const res = changeStatus(id)
+                    if (res.code === 200) {
+                        this.fetch()
+                        this.msg = res.message
+                    } else {
+                        alert(res.message)
+                    }
+                },
+                sava() {
+                    const res = saveUser(this.user);
+                    if (res.code === 200) {
+                        this.fetch()
+                        this.mMsg = res.message
+                    } else {
+                        alert(res.message)
+                    }
+                },
+                up() {
+                    if (this.pageable.page > 0) {
+                        this.pageable.page = this.pageable.page - 1
+                        this.fetch()
+                    }
+                },
+                down() {
+                    if (this.pageable.page < this.pageable.totalPages) {
+                        this.pageable.page = this.pageable.page + 1
+                        this.fetch()
+                    }
+                },
+                toPage(page) {
+                    this.pageable.page = page
+                    this.fetch()
+                }
+            },
+            created() {
+                this.fetch()
+            }
+        })
+    </script>
+</div>
+</body>
+</html>
