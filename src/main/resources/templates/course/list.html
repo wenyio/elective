@@ -131,12 +131,14 @@
                             <td>{{index+1}}</td>
                             <td>{{item.student.name}}</td>
                             <td>{{item.student.number}}</td>
-                            <td>{{item.grade}}</td>
+                            <td>
+                                <input type="number" v-model="item.grade"/>
+                            </td>
                             <td>{{item.status === 0 ? '未结算' : item.status === 1 ? '通过' : '未通过'}}</td>
                             <td>
-<!--                                <button type="button" class="btn btn-danger btn-xs" >-->
-<!--                                    删除-->
-<!--                                </button>-->
+                                <button type="button" class="btn btn-success btn-xs" @click="saveDetail(item)">
+                                    保存
+                                </button>
                             </td>
                         </tr>
                     </table>
@@ -267,10 +269,19 @@
                         alert(res.message)
                     }
                 },
+                // 结算课程
                 settlementById(courseId) {
                     const res = settlement(courseId);
-                    if (rse.code === 200) {
+                    if (res.code === 200) {
                         this.fetch()
+                    }
+                    alert(res.message)
+                },
+                // 保存选修成绩
+                saveDetail(detail) {
+                    const res = saveGrade(detail.id, detail.grade);
+                    if (res.code === 200) {
+                        this.queryDetail(detail.courseId)
                     }
                     alert(res.message)
                 },

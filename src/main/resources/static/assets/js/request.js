@@ -1,4 +1,4 @@
-import("/static/assets/plugins/jquery/jquery.min.js")
+// import("/static/assets/plugins/jquery/jquery.js")
 
 function request(url, { type, data, contentType, dataType}) {
     let res;

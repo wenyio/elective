@@ -37,6 +37,7 @@ public class UserCourseDTOFactory {
     @Builder
     public static class UserCourseDTO {
 
+        private Integer id;
         private Integer studentId;
         private Integer courseId;
 
@@ -58,6 +59,7 @@ public class UserCourseDTOFactory {
               .student(userDTOFactory.pojoToDTO(userCourse.getStudent()))
               .grade((userCourse.getGrade()))
               .status(userCourse.getStatus())
+              .id(userCourse.getId())
               .build();
     };
 }

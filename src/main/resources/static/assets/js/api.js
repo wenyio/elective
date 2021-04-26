@@ -53,3 +53,7 @@ function electiveByCourseId(courseId) {
 function cancelElective(courseId) {
     return request(`/api/user/elective/${courseId}/cancel`, { type: "GET" });
 }
+
+function saveGrade(ucId, grade) {
+    return request(`/api/user/course/${ucId}/grade/${grade}`, {type: "POST"})
+}

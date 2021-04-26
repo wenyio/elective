@@ -1,5 +1,7 @@
 package com.example.elective.web.controller;
 
+import com.example.elective.service.CourseService;
+import com.example.elective.service.UserCourseService;
 import com.example.elective.service.UserService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -27,7 +29,10 @@ public class PageController {
 
     @Resource
     private UserService userService;
-
+    @Resource
+    private CourseService courseService;
+    @Resource
+    private UserCourseService userCourseService;
     @Resource
     private HttpSession httpSession;
 
@@ -47,6 +52,10 @@ public class PageController {
     @GetMapping(value = "/dashboard")
     public String dashboard(Model model) {
         httpSession.setAttribute(ACTIVE_URL, "dashboard");
+        // 一些统计信息 课程数 学生数 选课数
+        model.addAttribute("courses", courseService.count());
+        model.addAttribute("students", userService.count());
+        model.addAttribute("elective", userCourseService.count());
         return "dashboard";
     }
 
